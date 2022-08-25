@@ -7,5 +7,5 @@
 | model  | params | accuracy | weights |
 | ------------- | ------------- | ------------- | ------------- |
 | vit | - | - | - |
-| swin | 74.8 | - | - |
+| swin | 74.8 M | - | - |
 | swin (segmentation) | 74.8 M | - | - |
