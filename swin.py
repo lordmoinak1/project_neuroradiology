@@ -1,6 +1,3 @@
-# import sys
-# sys.path.insert(0, '/home/moibhattacha/project_aorta')
-
 import torch
 import monai
 import pl_bolts
@@ -23,7 +20,7 @@ class swin_model(nn.Module):
                       dropout_path_rate=0.0,
                       use_checkpoint=True,
                       )
-        model_dict = torch.load('/home/moibhattacha/project_neuroradiology/weights/fold0_f48_ep300_4gpu_dice0_8854/model.pt')["state_dict"]
+        model_dict = torch.load('/path/to/weights/fold0_f48_ep300_4gpu_dice0_8854/model.pt')["state_dict"]
         self.model.load_state_dict(model_dict)
         self.model.eval()
         
@@ -136,8 +133,3 @@ class swin_baseline(pl.LightningModule):
 
 if __name__ == "__main__":    
     flag = 0
-
-    model = swin_model()
-    inputs = torch.randn(1, 4, 128, 128, 128)
-    outputs = model(inputs)
-    print(outputs.shape)
