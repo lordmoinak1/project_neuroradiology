@@ -13,17 +13,16 @@ from dataset import *
 pl.seed_everything(3407, workers=True)
 
 def training_classification():
-    df = pd.read_json('/home/mbhattac/project_neuroradiology/rsna_miccai_radiogenomics_cross_validation.json')
+    df = pd.read_json('/path/to/rsna_miccai_radiogenomics_cross_validation.json')
     for fold in range(5):
         train_subjects, train_transform, val_subjects, val_transform = rsna_miccai_radiogenomics_cross_validation(dataframe=df, fold=fold)
         train_loader, val_loader = dataloader_cross_validation(train_subjects, train_transform, val_subjects, val_transform, batch_size=1, num_workers=4)
 
         model = swin_baseline()
-        # wandb_logger = pl.loggers.WandbLogger(project="aorta")
 
         checkpoint_callback = pl.callbacks.ModelCheckpoint(
             monitor="val_acc", 
-            dirpath="/home/moibhattacha/project_neuroradiology/checkpoints/rsna_miccai_radiogenomics_fold_{}".format(fold), 
+            dirpath="/path/to/checkpoints/rsna_miccai_radiogenomics_fold_{}".format(fold), 
             filename="swin-classification-{fold:02d}-{epoch:02d}-{val_loss:.6f}-{val_acc:.6f}-{val_f1:.6f}-{val_pr:.6f}-{val_re:.6f}", 
             mode="max",
         )
@@ -38,7 +37,6 @@ def training_classification():
                 checkpoint_callback,
                 ], 
             gradient_clip_algorithm="value",
-            # logger=wandb_logger,
             )
         
         trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
