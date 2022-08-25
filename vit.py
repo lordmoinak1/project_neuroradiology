@@ -7,34 +7,38 @@ import pl_bolts
 import torchmetrics
 import torch.nn as nn
 import pytorch_lightning as pl
+from monai.utils import ensure_tuple_rep
 
 from dataset import *
 
 class swin_model(nn.Module):
     def __init__(self,):
         super(swin_model, self).__init__()
+        patch_size = ensure_tuple_rep(2, 3)
+        self.vit = monai.networks.nets.UNETR(
+            in_channels=4,
+            out_channels=1,
+            img_size=(96, 96, 96),
+            feature_size=12,
+            hidden_size=768,
+            mlp_dim=3072,
+            num_heads=12,
+            # num_layers=12,
+            pos_embed="perceptron",
+            norm_name="instance",
+            res_block=True,
+            conv_block=True,
+            dropout_rate=0.0,
+        )
 
-        self.model = monai.networks.nets.SwinUNETR(img_size=128,
-                      in_channels=4,
-                      out_channels=3,
-                      feature_size=48,
-                      drop_rate=0.0,
-                      attn_drop_rate=0.0,
-                      dropout_path_rate=0.0,
-                      use_checkpoint=True,
-                      )
-        model_dict = torch.load('/home/moibhattacha/project_neuroradiology/weights/fold0_f48_ep300_4gpu_dice0_8854/model.pt')["state_dict"]
-        self.model.load_state_dict(model_dict)
-        self.model.eval()
-        
         self.classifier_head = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(6291456, 2),
+            nn.Linear(884736, 2),
         )
 
     def forward(self, x):
         x = x.contiguous()
-        x = self.model(x)
+        x = self.vit(x)
         x = self.classifier_head(x)
         return x
 
@@ -46,7 +50,28 @@ class swin_baseline(pl.LightningModule):
     self.learning_rate = learning_rate
     self.num_workers = 8
     
-    self._swin = swin_model()
+    # _unetr = monai.networks.nets.UNETR(
+    #         in_channels=4,
+    #         out_channels=3,
+    #         img_size=(96, 96, 96),
+    #         feature_size=12,
+    #         hidden_size=768,
+    #         mlp_dim=3072,
+    #         num_heads=12,
+    #         # num_layers=12,
+    #         pos_embed="perceptron",
+    #         norm_name="instance",
+    #         res_block=True,
+    #         conv_block=True,
+    #         dropout_rate=0.0,
+    #     )
+
+    self.model = swin_model()
+    # nn.Sequential(
+    #   _unetr,
+    #   nn.Flatten(),
+    #   nn.Linear(2654208, 2),
+    # )
 
     self.classification_loss = torch.nn.CrossEntropyLoss()
 
@@ -61,18 +86,16 @@ class swin_baseline(pl.LightningModule):
     self.val_recall = torchmetrics.Recall()
 
   def forward(self,x):
-    return self._swin(x)
+    return self.model(x)
 
   def configure_optimizers(self):
-    optimizer = torch.optim.AdamW(self._swin.parameters(), lr=self.learning_rate, weight_decay=1e-1)
+    optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.learning_rate, weight_decay=1e-1)
     scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=50, max_epochs=5000)
     return {"optimizer": optimizer, "lr_scheduler": scheduler}
     
   def training_step(self, batch, batch_idx):
     inputs = batch['image']
     labels = batch['label_classification']
-    labels = torch.argmax(labels)
-    labels = torch.unsqueeze(labels, dim=-1)
     outputs = self.forward(inputs)
     loss = self.classification_loss(outputs, labels)
     self.train_accuracy(outputs, labels)
@@ -104,8 +127,6 @@ class swin_baseline(pl.LightningModule):
   def validation_step(self, batch, batch_idx):
     inputs = batch['image']
     labels = batch['label_classification']
-    labels = torch.argmax(labels)
-    labels = torch.unsqueeze(labels, dim=-1)
     outputs = self.forward(inputs)
     loss = self.classification_loss(outputs, labels)
     self.val_accuracy(outputs, labels)
@@ -137,7 +158,27 @@ class swin_baseline(pl.LightningModule):
 if __name__ == "__main__":    
     flag = 0
 
-    model = swin_model()
-    inputs = torch.randn(1, 4, 128, 128, 128)
+    _unetr = monai.networks.nets.UNETR(
+            in_channels=4,
+            out_channels=1,
+            img_size=(96, 96, 96),
+            feature_size=12,
+            hidden_size=768,
+            mlp_dim=3072,
+            num_heads=12,
+            # num_layers=12,
+            pos_embed="perceptron",
+            norm_name="instance",
+            res_block=True,
+            conv_block=True,
+            dropout_rate=0.0,
+        )
+
+    model = nn.Sequential(
+      _unetr,
+      nn.Flatten(),
+      nn.Linear(884736, 2),
+    )
+    inputs = torch.randn(1, 4, 96, 96, 96)
     outputs = model(inputs)
     print(outputs.shape)
