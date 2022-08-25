@@ -1,6 +1,3 @@
-# import sys
-# sys.path.insert(0, '/home/moibhattacha/project_aorta')
-
 import torch
 import monai
 import pl_bolts
