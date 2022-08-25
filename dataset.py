@@ -12,30 +12,6 @@ from monai.data import (
 from monai import transforms as T
 
 
-# def datafold_read(datalist, basedir, fold=0, key='training'):
-
-#     with open(datalist) as f:
-#         json_data = json.load(f)
-
-#     json_data = json_data[key]
-
-#     for d in json_data:
-#         for k, v in d.items():
-#             if isinstance(d[k], list):
-#                 d[k] = [os.path.join(basedir, iv) for iv in d[k]]
-#             elif isinstance(d[k], str):
-#                 d[k] = os.path.join(basedir, d[k]) if len(d[k]) > 0 else d[k]
-
-#     train=[]
-#     val=[]
-#     for d in json_data:
-#         if 'fold' in d and d['fold'] == fold:
-#             val.append(d)
-#         else:
-#             train.append(d)
-
-#     return train, val
-
 def load_datalist_cross_validation(data_path=None, dataframe=None, fold=None):
     train_subjects = []
     val_subjects = []
@@ -62,9 +38,8 @@ def dataloader_cross_validation(train_subjects, train_transform, val_subjects, v
     return train_loader, val_loader
 
 def rsna_miccai_radiogenomics_cross_validation(dataframe=None, fold=None):
-    data_path = '/home/moibhattacha/datasets/brats21/'
+    data_path = '/path/to/brats21/'
     train_subjects, val_subjects = load_datalist_cross_validation(data_path=data_path, dataframe=dataframe, fold=fold)
-    # train_subjects, val_subjects = datafold_read(datalist='/home/moibhattacha/project_neuroradiology/rsna_miccai_radiogenomics_cross_validation.json', basedir=data_path, fold=fold)
 
     train_transform = T.Compose([
             T.LoadImaged(keys=["image", "label_segmentation"]),
