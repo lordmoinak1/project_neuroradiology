@@ -6,6 +6,6 @@
 ## Classification results
 | model  | params | accuracy | weights |
 | ------------- | ------------- | ------------- | ------------- |
-| vit | - | - | - |
+| vit | 102 M | - | - |
 | swin | 74.8 M | - | - |
 | swin (segmentation) | 74.8 M | - | - |
