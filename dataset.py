@@ -37,12 +37,11 @@ def dataloader_cross_validation(train_subjects, train_transform, val_subjects, v
     return train_loader, val_loader
 
 def rsna_miccai_radiogenomics_cross_validation(dataframe=None, fold=None):
-    data_path = '/home/mbhattac/datasets/brats21/'
+    data_path = '/path/to/brats21/'
     train_subjects, val_subjects = load_datalist_cross_validation(data_path=data_path, dataframe=dataframe, fold=fold)
     train_transform =T.Compose(
         [
             T.LoadImaged(keys=["image"]),
-            # T.ConvertToMultiChannelBasedOnBratsClassesd(keys="label"),
             T.CropForegroundd(keys=["image"], source_key="image", k_divisible=[96, 96, 96]),
             T.RandSpatialCropd(keys=["image"], roi_size=[96, 96, 96], random_size=False),
             T.RandFlipd(keys=["image"], prob=0.5, spatial_axis=0),
@@ -57,7 +56,6 @@ def rsna_miccai_radiogenomics_cross_validation(dataframe=None, fold=None):
     val_transform = T.Compose(
         [
             T.LoadImaged(keys=["image"]),
-            # T.ConvertToMultiChannelBasedOnBratsClassesd(keys="label"),
             T.NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True),
             T.ToTensord(keys=["image", "label"]),
         ]
