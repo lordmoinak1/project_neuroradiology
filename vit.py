@@ -1,6 +1,3 @@
-# import sys
-# sys.path.insert(0, '/home/moibhattacha/project_aorta')
-
 import torch
 import monai
 import pl_bolts
@@ -49,29 +46,8 @@ class swin_baseline(pl.LightningModule):
     self.batch_size = batch_size
     self.learning_rate = learning_rate
     self.num_workers = 8
-    
-    # _unetr = monai.networks.nets.UNETR(
-    #         in_channels=4,
-    #         out_channels=3,
-    #         img_size=(96, 96, 96),
-    #         feature_size=12,
-    #         hidden_size=768,
-    #         mlp_dim=3072,
-    #         num_heads=12,
-    #         # num_layers=12,
-    #         pos_embed="perceptron",
-    #         norm_name="instance",
-    #         res_block=True,
-    #         conv_block=True,
-    #         dropout_rate=0.0,
-    #     )
 
     self.model = swin_model()
-    # nn.Sequential(
-    #   _unetr,
-    #   nn.Flatten(),
-    #   nn.Linear(2654208, 2),
-    # )
 
     self.classification_loss = torch.nn.CrossEntropyLoss()
 
@@ -157,28 +133,3 @@ class swin_baseline(pl.LightningModule):
 
 if __name__ == "__main__":    
     flag = 0
-
-    _unetr = monai.networks.nets.UNETR(
-            in_channels=4,
-            out_channels=1,
-            img_size=(96, 96, 96),
-            feature_size=12,
-            hidden_size=768,
-            mlp_dim=3072,
-            num_heads=12,
-            # num_layers=12,
-            pos_embed="perceptron",
-            norm_name="instance",
-            res_block=True,
-            conv_block=True,
-            dropout_rate=0.0,
-        )
-
-    model = nn.Sequential(
-      _unetr,
-      nn.Flatten(),
-      nn.Linear(884736, 2),
-    )
-    inputs = torch.randn(1, 4, 96, 96, 96)
-    outputs = model(inputs)
-    print(outputs.shape)
