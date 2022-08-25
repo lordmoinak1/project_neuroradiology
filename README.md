@@ -6,5 +6,6 @@
 ## Classification results
 | model  | params | accuracy | weights |
 | ------------- | ------------- | ------------- | ------------- |
-| swin (entire image) | - | - | - |
-| swin (only-segmentation) | - | - | - |
+| vit | - | - | - |
+| swin | 74.8 | - | - |
+| swin (segmentation) | 74.8 M | - | - |
