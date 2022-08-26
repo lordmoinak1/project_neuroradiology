@@ -294,6 +294,6 @@ if __name__ == "__main__":
     generate_segmentations(pretrained_path='/path/to/weights/fold3_f48_ep300_4gpu_dice0_8924/model.pt', fold=3)
     generate_segmentations(pretrained_path='/path/to/weights/fold4_f48_ep300_4gpu_dice0_9035/model.pt', fold=4)
     
-    generate_segmentations(pretrained_path='/path/to/weights/fold4_f48_ep300_4gpu_dice0_9035/model.pt', fold=4, name='00010')
+    generate_segmentations_name(pretrained_path='/path/to/weights/fold4_f48_ep300_4gpu_dice0_9035/model.pt', fold=4, name='00010')
     
     
