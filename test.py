@@ -139,10 +139,10 @@ def get_loader(data_dir, datalist_json, fold, test_mode):
 
 def generate_segmentations(pretrained_path, fold):
     test_mode = True
-    output_directory = '/home/mbhattac/project_neuroradiology/outputs'
+    output_directory = '/path/to/project_neuroradiology/outputs'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
-    test_loader = get_loader(data_dir='/home/mbhattac/datasets/brats21/', datalist_json='/home/mbhattac/project_neuroradiology/brats21_folds.json', fold=fold, test_mode=True)
+    test_loader = get_loader(data_dir='/path/to/datasets/brats21/', datalist_json='/path/to/brats21_folds.json', fold=fold, test_mode=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     pretrained_pth = pretrained_path
     model = monai.networks.nets.SwinUNETR(img_size=128,
@@ -185,8 +185,10 @@ def generate_segmentations(pretrained_path, fold):
         print("Finished inference!")
 
 if __name__ == "__main__":
-    generate_segmentations(pretrained_path='/home/mbhattac/project_neuroradiology/weights/fold0_f48_ep300_4gpu_dice0_8854/model.pt', fold=0)
-    generate_segmentations(pretrained_path='/home/mbhattac/project_neuroradiology/weights/fold1_f48_ep300_4gpu_dice0_9059/model.pt', fold=1)
-    generate_segmentations(pretrained_path='/home/mbhattac/project_neuroradiology/weights/fold2_f48_ep300_4gpu_dice0_8981/model.pt', fold=2)
-    generate_segmentations(pretrained_path='/home/mbhattac/project_neuroradiology/weights/fold3_f48_ep300_4gpu_dice0_8924/model.pt', fold=3)
-    generate_segmentations(pretrained_path='/home/mbhattac/project_neuroradiology/weights/fold4_f48_ep300_4gpu_dice0_9035/model.pt', fold=4)
+    generate_segmentations(pretrained_path='/path/to/weights/fold0_f48_ep300_4gpu_dice0_8854/model.pt', fold=0)
+    generate_segmentations(pretrained_path='/path/to/weights/fold1_f48_ep300_4gpu_dice0_9059/model.pt', fold=1)
+    generate_segmentations(pretrained_path='/path/to/weights/fold2_f48_ep300_4gpu_dice0_8981/model.pt', fold=2)
+    generate_segmentations(pretrained_path='/path/to/weights/fold3_f48_ep300_4gpu_dice0_8924/model.pt', fold=3)
+    generate_segmentations(pretrained_path='/path/to/weights/fold4_f48_ep300_4gpu_dice0_9035/model.pt', fold=4)
+    
+    
